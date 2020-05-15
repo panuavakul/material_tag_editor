@@ -2,6 +2,8 @@
 
 A simple tag editor for inputing tags. 
 
+![image](https://user-images.githubusercontent.com/18391546/82047483-dc8f0f00-96ed-11ea-8a91-7eaa64e2358b.gif)
+
 ## Usage
 Add the package to pubspec.yaml
 
