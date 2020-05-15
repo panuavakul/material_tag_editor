@@ -12,9 +12,6 @@ class TagRenderLayoutBox extends RenderCustomMultiChildLayoutBox {
 
   @override
   void performLayout() {
-    /// Call the [performLayout()] normally
-    /// This is where [TagsEditorLayoutDelegate] will calculate the height
-    /// and put it in it's [parentSize]
     super.performLayout();
 
     //* Set the parent size here
