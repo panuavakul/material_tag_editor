@@ -1,7 +1,6 @@
 name: material_tag_editor
 description: A simple tag editor for inputing tags. 
 version: 0.0.1
-author: Panu Avakul
 homepage: https://github.com/panuavakul/material_tag_editor.git
 
 environment:
