@@ -1,8 +1,8 @@
 name: material_tag_editor
-description: A new Flutter package project.
+description: A simple tag editor for inputing tags. 
 version: 0.0.1
-author:
-homepage:
+author: Panu Avakul
+homepage: https://github.com/panuavakul/material_tag_editor.git
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

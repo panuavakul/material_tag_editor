@@ -1,6 +1,6 @@
 # Material Tag Editor
 
-A simple tag editor for imputing tags. 
+A simple tag editor for inputing tags. 
 
 ## Usage
 Add the package to pubspec.yaml
