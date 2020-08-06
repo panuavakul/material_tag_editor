@@ -8,24 +8,48 @@ import './tag_layout.dart';
 /// TODO: Support remove while typing
 class TagEditor extends StatefulWidget {
   const TagEditor({
+    Key key,
     @required this.length,
     @required this.tagBuilder,
-    this.inputDecoration = const InputDecoration(),
     this.hasAddButton = true,
     @required this.onTagChanged,
     this.delimeters = const [],
     this.icon,
     this.enabled = true,
-  });
+    // TextField's Props
+    this.inputDecoration = const InputDecoration(),
+    this.keyboardType,
+    this.textInputAction,
+    this.textCapitalization = TextCapitalization.none,
+    this.textAlign = TextAlign.start,
+    this.textDirection,
+    this.readOnly = false,
+    this.autofocus = false,
+    this.autocorrect = false,
+    this.enableSuggestions = true,
+    this.maxLines = 1,
+  }) : super(key: key);
 
   final int length;
   final Widget Function(BuildContext, int) tagBuilder;
-  final InputDecoration inputDecoration;
   final bool hasAddButton;
   final ValueChanged<String> onTagChanged;
   final List<String> delimeters;
   final IconData icon;
   final bool enabled;
+
+  /// [TextField]'s Props
+  final InputDecoration inputDecoration;
+  final TextInputType keyboardType;
+  final TextInputAction textInputAction;
+  final TextCapitalization textCapitalization;
+  final TextAlign textAlign;
+  final TextDirection textDirection;
+  final bool autofocus;
+  final bool autocorrect;
+  final bool enableSuggestions;
+  final int maxLines;
+  final bool readOnly;
 
   @override
   _TagsEditorState createState() => _TagsEditorState();
@@ -147,8 +171,18 @@ class _TagsEditorState extends State<TagEditor> {
                 id: TagEditorLayoutDelegate.textFieldId,
                 child: TextField(
                   focusNode: _focusNode,
+                  enabled: widget.enabled,
                   controller: _textFieldController,
-                  autocorrect: false,
+                  keyboardType: widget.keyboardType,
+                  textCapitalization: widget.textCapitalization,
+                  textInputAction: widget.textInputAction,
+                  autocorrect: widget.autocorrect,
+                  textAlign: widget.textAlign,
+                  textDirection: widget.textDirection,
+                  readOnly: widget.readOnly,
+                  autofocus: widget.autofocus,
+                  enableSuggestions: widget.enableSuggestions,
+                  maxLines: widget.maxLines,
                   decoration: decoration,
                   onChanged: (text) {
                     _onTextFieldChange(text);
