@@ -28,6 +28,8 @@ class TagEditor extends StatefulWidget {
     this.autocorrect = false,
     this.enableSuggestions = true,
     this.maxLines = 1,
+    this.textInputActionCreatesTag = false,
+    this.keyboardAppearance,
   }) : super(key: key);
 
   final int length;
@@ -50,6 +52,8 @@ class TagEditor extends StatefulWidget {
   final bool enableSuggestions;
   final int maxLines;
   final bool readOnly;
+  final bool textInputActionCreatesTag;
+  final Brightness keyboardAppearance;
 
   @override
   _TagsEditorState createState() => _TagsEditorState();
@@ -88,7 +92,7 @@ class _TagsEditorState extends State<TagEditor> {
     }
   }
 
-  void _onTextFieldChange(String string) {
+  void _onTextFieldChange(String string, {bool submitted = false}) {
     // This function looks ugly fix this
     final previousText = _previousText;
     _previousText = string;
@@ -96,10 +100,10 @@ class _TagsEditorState extends State<TagEditor> {
       return;
     }
 
-    if (string.length > previousText.length) {
+    if (string.length > previousText.length || submitted) {
       // Add case
       final newChar = string[string.length - 1];
-      if (widget.delimeters.contains(newChar)) {
+      if (widget.delimeters.contains(newChar) || submitted) {
         final targetString = string.substring(0, string.length - 1);
         if (targetString.isNotEmpty) {
           _onTagChanged(targetString);
@@ -174,6 +178,7 @@ class _TagsEditorState extends State<TagEditor> {
                   enabled: widget.enabled,
                   controller: _textFieldController,
                   keyboardType: widget.keyboardType,
+                  keyboardAppearance: widget.keyboardAppearance,
                   textCapitalization: widget.textCapitalization,
                   textInputAction: widget.textInputAction,
                   autocorrect: widget.autocorrect,
@@ -186,6 +191,11 @@ class _TagsEditorState extends State<TagEditor> {
                   decoration: decoration,
                   onChanged: (text) {
                     _onTextFieldChange(text);
+                  },
+                  onSubmitted: (text) {
+                    if (widget.textInputActionCreatesTag) {
+                      _onTextFieldChange(text, submitted: true);
+                    }
                   },
                 ),
               )
