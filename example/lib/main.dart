@@ -51,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 length: values.length,
                 delimeters: [',', ' '],
                 hasAddButton: true,
+                resetTextOnSubmitted: true,
                 onSubmitted: (outstandingValue) {
                   setState(() {
                     values.add(outstandingValue);

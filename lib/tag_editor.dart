@@ -28,6 +28,7 @@ class TagEditor extends StatefulWidget {
     this.autocorrect = false,
     this.enableSuggestions = true,
     this.maxLines = 1,
+    this.resetTextOnSubmitted = false,
     this.onSubmitted,
     this.keyboardAppearance,
   }) : super(key: key);
@@ -40,8 +41,16 @@ class TagEditor extends StatefulWidget {
   final IconData icon;
   final bool enabled;
 
+  /// Reset the TextField when `onSubmitted` is called
+  /// this is default to `false` because when the form is submitted
+  /// usually the outstanding value is just used, but this option is here
+  /// in case you want to reset it for any reasons (like convering the
+  /// outstanding value to tag)
+  final bool resetTextOnSubmitted;
+
   /// Called when the user are done editing the text in the [TextField]
   /// Use this to get the outstanding text that aren't converted to tag yet
+  /// If no text is entered when this is called an empty string will be passed
   final ValueChanged<String> onSubmitted;
 
   /// [TextField]'s Props
@@ -113,6 +122,13 @@ class _TagsEditorState extends State<TagEditor> {
           _onTagChanged(targetString);
         }
       }
+    }
+  }
+
+  void _onSubmitted(String string) {
+    widget.onSubmitted(string);
+    if (widget.resetTextOnSubmitted) {
+      _textFieldController.text = '';
     }
   }
 
@@ -194,7 +210,7 @@ class _TagsEditorState extends State<TagEditor> {
                   maxLines: widget.maxLines,
                   decoration: decoration,
                   onChanged: _onTextFieldChange,
-                  onSubmitted: widget.onSubmitted,
+                  onSubmitted: _onSubmitted,
                 ),
               )
             ],
