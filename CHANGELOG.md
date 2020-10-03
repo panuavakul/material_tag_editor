@@ -1,3 +1,14 @@
+## [0.0.4] - 2020/10/3.
+
+#### Feature
+
+- Expose keyboardAppearance
+  - https://github.com/panuavakul/material_tag_editor/pull/9
+- Expose custom onSubmitted
+  - https://github.com/panuavakul/material_tag_editor/pull/10
+- Add more documentation
+  - https://github.com/panuavakul/material_tag_editor/pull/11
+
 ## [0.0.3] - 2020/08/6.
 
 #### Feature
