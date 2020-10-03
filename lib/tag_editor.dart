@@ -96,7 +96,7 @@ class _TagsEditorState extends State<TagEditor> {
     }
   }
 
-  void _onTextFieldChange(String string, {bool submitted = false}) {
+  void _onTextFieldChange(String string) {
     // This function looks ugly fix this
     final previousText = _previousText;
     _previousText = string;
@@ -104,10 +104,10 @@ class _TagsEditorState extends State<TagEditor> {
       return;
     }
 
-    if (string.length > previousText.length || submitted) {
+    if (string.length > previousText.length) {
       // Add case
       final newChar = string[string.length - 1];
-      if (widget.delimeters.contains(newChar) || submitted) {
+      if (widget.delimeters.contains(newChar)) {
         final targetString = string.substring(0, string.length - 1);
         if (targetString.isNotEmpty) {
           _onTagChanged(targetString);
