@@ -28,7 +28,7 @@ class TagEditor extends StatefulWidget {
     this.autocorrect = false,
     this.enableSuggestions = true,
     this.maxLines = 1,
-    this.textInputActionCreatesTag = false,
+    this.onSubmitted,
     this.keyboardAppearance,
   }) : super(key: key);
 
@@ -40,7 +40,12 @@ class TagEditor extends StatefulWidget {
   final IconData icon;
   final bool enabled;
 
+  /// Called when the user are done editing the text in the [TextField]
+  /// Use this to get the outstanding text that aren't converted to tag yet
+  final ValueChanged<String> onSubmitted;
+
   /// [TextField]'s Props
+  /// Please refer to [TextField] documentation
   final InputDecoration inputDecoration;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
@@ -52,7 +57,6 @@ class TagEditor extends StatefulWidget {
   final bool enableSuggestions;
   final int maxLines;
   final bool readOnly;
-  final bool textInputActionCreatesTag;
   final Brightness keyboardAppearance;
 
   @override
@@ -189,14 +193,8 @@ class _TagsEditorState extends State<TagEditor> {
                   enableSuggestions: widget.enableSuggestions,
                   maxLines: widget.maxLines,
                   decoration: decoration,
-                  onChanged: (text) {
-                    _onTextFieldChange(text);
-                  },
-                  onSubmitted: (text) {
-                    if (widget.textInputActionCreatesTag) {
-                      _onTextFieldChange(text, submitted: true);
-                    }
-                  },
+                  onChanged: _onTextFieldChange,
+                  onSubmitted: widget.onSubmitted,
                 ),
               )
             ],
