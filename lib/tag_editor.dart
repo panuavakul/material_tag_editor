@@ -33,13 +33,25 @@ class TagEditor extends StatefulWidget {
     this.keyboardAppearance,
   }) : super(key: key);
 
+  /// The number of tags currently shown
   final int length;
+
+  /// Builder for building the tags, this usually use Flutter's Material `Chip`
   final Widget Function(BuildContext, int) tagBuilder;
+
+  /// Show the add button to the right
   final bool hasAddButton;
-  final ValueChanged<String> onTagChanged;
-  final List<String> delimeters;
+
+  /// The icon for the add button enabled with `hasAddButton`
   final IconData icon;
-  final bool enabled;
+
+  /// Callback for when the tag changed. Use this to get the new tag and add
+  /// it to the state
+  final ValueChanged<String> onTagChanged;
+
+  /// When the string value in this `delimeters` is founded, a new tag will be
+  /// created and `onTagChanged` called
+  final List<String> delimeters;
 
   /// Reset the TextField when `onSubmitted` is called
   /// this is default to `false` because when the form is submitted
@@ -55,6 +67,7 @@ class TagEditor extends StatefulWidget {
 
   /// [TextField]'s Props
   /// Please refer to [TextField] documentation
+  final bool enabled;
   final InputDecoration inputDecoration;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
