@@ -51,7 +51,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 length: values.length,
                 delimeters: [',', ' '],
                 hasAddButton: true,
-                textInputActionCreatesTag: true,
+                resetTextOnSubmitted: true,
+                onSubmitted: (outstandingValue) {
+                  setState(() {
+                    values.add(outstandingValue);
+                  });
+                },
                 inputDecoration: const InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Hint Text...',

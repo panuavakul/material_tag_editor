@@ -28,7 +28,8 @@ class TagEditor extends StatefulWidget {
     this.autocorrect = false,
     this.enableSuggestions = true,
     this.maxLines = 1,
-    this.textInputActionCreatesTag = false,
+    this.resetTextOnSubmitted = false,
+    this.onSubmitted,
     this.keyboardAppearance,
   }) : super(key: key);
 
@@ -40,7 +41,20 @@ class TagEditor extends StatefulWidget {
   final IconData icon;
   final bool enabled;
 
+  /// Reset the TextField when `onSubmitted` is called
+  /// this is default to `false` because when the form is submitted
+  /// usually the outstanding value is just used, but this option is here
+  /// in case you want to reset it for any reasons (like convering the
+  /// outstanding value to tag)
+  final bool resetTextOnSubmitted;
+
+  /// Called when the user are done editing the text in the [TextField]
+  /// Use this to get the outstanding text that aren't converted to tag yet
+  /// If no text is entered when this is called an empty string will be passed
+  final ValueChanged<String> onSubmitted;
+
   /// [TextField]'s Props
+  /// Please refer to [TextField] documentation
   final InputDecoration inputDecoration;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
@@ -52,7 +66,6 @@ class TagEditor extends StatefulWidget {
   final bool enableSuggestions;
   final int maxLines;
   final bool readOnly;
-  final bool textInputActionCreatesTag;
   final Brightness keyboardAppearance;
 
   @override
@@ -92,7 +105,7 @@ class _TagsEditorState extends State<TagEditor> {
     }
   }
 
-  void _onTextFieldChange(String string, {bool submitted = false}) {
+  void _onTextFieldChange(String string) {
     // This function looks ugly fix this
     final previousText = _previousText;
     _previousText = string;
@@ -100,15 +113,22 @@ class _TagsEditorState extends State<TagEditor> {
       return;
     }
 
-    if (string.length > previousText.length || submitted) {
+    if (string.length > previousText.length) {
       // Add case
       final newChar = string[string.length - 1];
-      if (widget.delimeters.contains(newChar) || submitted) {
+      if (widget.delimeters.contains(newChar)) {
         final targetString = string.substring(0, string.length - 1);
         if (targetString.isNotEmpty) {
           _onTagChanged(targetString);
         }
       }
+    }
+  }
+
+  void _onSubmitted(String string) {
+    widget.onSubmitted(string);
+    if (widget.resetTextOnSubmitted) {
+      _textFieldController.text = '';
     }
   }
 
@@ -189,14 +209,8 @@ class _TagsEditorState extends State<TagEditor> {
                   enableSuggestions: widget.enableSuggestions,
                   maxLines: widget.maxLines,
                   decoration: decoration,
-                  onChanged: (text) {
-                    _onTextFieldChange(text);
-                  },
-                  onSubmitted: (text) {
-                    if (widget.textInputActionCreatesTag) {
-                      _onTextFieldChange(text, submitted: true);
-                    }
-                  },
+                  onChanged: _onTextFieldChange,
+                  onSubmitted: _onSubmitted,
                 ),
               )
             ],
