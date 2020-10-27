@@ -29,17 +29,46 @@ class TagEditor extends StatefulWidget {
     this.autocorrect = false,
     this.enableSuggestions = true,
     this.maxLines = 1,
+    this.resetTextOnSubmitted = false,
+    this.onSubmitted,
+    this.keyboardAppearance,
   }) : super(key: key);
 
+  /// The number of tags currently shown
   final int length;
+
+  /// Builder for building the tags, this usually use Flutter's Material `Chip`
   final Widget Function(BuildContext, int) tagBuilder;
+
+  /// Show the add button to the right
   final bool hasAddButton;
-  final ValueChanged<String> onTagChanged;
-  final List<String> delimeters;
+
+  /// The icon for the add button enabled with `hasAddButton`
   final IconData icon;
-  final bool enabled;
+
+  /// Callback for when the tag changed. Use this to get the new tag and add
+  /// it to the state
+  final ValueChanged<String> onTagChanged;
+
+  /// When the string value in this `delimeters` is founded, a new tag will be
+  /// created and `onTagChanged` called
+  final List<String> delimeters;
+
+  /// Reset the TextField when `onSubmitted` is called
+  /// this is default to `false` because when the form is submitted
+  /// usually the outstanding value is just used, but this option is here
+  /// in case you want to reset it for any reasons (like convering the
+  /// outstanding value to tag)
+  final bool resetTextOnSubmitted;
+
+  /// Called when the user are done editing the text in the [TextField]
+  /// Use this to get the outstanding text that aren't converted to tag yet
+  /// If no text is entered when this is called an empty string will be passed
+  final ValueChanged<String> onSubmitted;
 
   /// [TextField]'s Props
+  /// Please refer to [TextField] documentation
+  final bool enabled;
   final TextStyle textStyle;
   final InputDecoration inputDecoration;
   final TextInputType keyboardType;
@@ -52,6 +81,7 @@ class TagEditor extends StatefulWidget {
   final bool enableSuggestions;
   final int maxLines;
   final bool readOnly;
+  final Brightness keyboardAppearance;
 
   @override
   _TagsEditorState createState() => _TagsEditorState();
@@ -107,6 +137,13 @@ class _TagsEditorState extends State<TagEditor> {
           _onTagChanged(targetString);
         }
       }
+    }
+  }
+
+  void _onSubmitted(String string) {
+    widget.onSubmitted(string);
+    if (widget.resetTextOnSubmitted) {
+      _textFieldController.text = '';
     }
   }
 
@@ -177,6 +214,7 @@ class _TagsEditorState extends State<TagEditor> {
                   enabled: widget.enabled,
                   controller: _textFieldController,
                   keyboardType: widget.keyboardType,
+                  keyboardAppearance: widget.keyboardAppearance,
                   textCapitalization: widget.textCapitalization,
                   textInputAction: widget.textInputAction,
                   autocorrect: widget.autocorrect,
@@ -187,9 +225,8 @@ class _TagsEditorState extends State<TagEditor> {
                   enableSuggestions: widget.enableSuggestions,
                   maxLines: widget.maxLines,
                   decoration: decoration,
-                  onChanged: (text) {
-                    _onTextFieldChange(text);
-                  },
+                  onChanged: _onTextFieldChange,
+                  onSubmitted: _onSubmitted,
                 ),
               )
             ],
