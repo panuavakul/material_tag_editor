@@ -17,7 +17,7 @@ class TagEditor extends StatefulWidget {
     this.icon,
     this.enabled = true,
     // TextField's Props
-    this.textStyle = const TextStyle(),
+    this.textStyle,
     this.inputDecoration = const InputDecoration(),
     this.keyboardType,
     this.textInputAction,
