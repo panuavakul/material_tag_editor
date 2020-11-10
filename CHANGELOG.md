@@ -1,3 +1,11 @@
+## [0.0.5] - 2020/11/10.
+
+Feature
+
+- Expose textStyle for custom input styling
+  - https://github.com/panuavakul/material_tag_editor/pull/12
+- Follow Flutter's beta channel
+
 ## [0.0.4] - 2020/10/3.
 
 #### Feature
