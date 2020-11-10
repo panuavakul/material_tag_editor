@@ -52,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 delimeters: [',', ' '],
                 hasAddButton: true,
                 resetTextOnSubmitted: true,
+                textStyle: TextStyle(color: Colors.grey),
                 onSubmitted: (outstandingValue) {
                   setState(() {
                     values.add(outstandingValue);
