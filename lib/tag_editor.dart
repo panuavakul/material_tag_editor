@@ -17,6 +17,7 @@ class TagEditor extends StatefulWidget {
     this.icon,
     this.enabled = true,
     // TextField's Props
+    this.textStyle,
     this.inputDecoration = const InputDecoration(),
     this.keyboardType,
     this.textInputAction,
@@ -68,6 +69,7 @@ class TagEditor extends StatefulWidget {
   /// [TextField]'s Props
   /// Please refer to [TextField] documentation
   final bool enabled;
+  final TextStyle textStyle;
   final InputDecoration inputDecoration;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
@@ -207,6 +209,7 @@ class _TagsEditorState extends State<TagEditor> {
               LayoutId(
                 id: TagEditorLayoutDelegate.textFieldId,
                 child: TextField(
+                  style: widget.textStyle,
                   focusNode: _focusNode,
                   enabled: widget.enabled,
                   controller: _textFieldController,
