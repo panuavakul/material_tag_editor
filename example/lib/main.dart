@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               TagEditor(
                 length: values.length,
-                delimeters: [',', ' '],
+                delimiters: [',', ' '],
                 hasAddButton: true,
                 resetTextOnSubmitted: true,
                 textStyle: TextStyle(color: Colors.grey),
