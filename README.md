@@ -1,10 +1,15 @@
 # Material Tag Editor
 
-A simple tag editor for inputing tags. 
+## Breaking Changes for 0.0.6
+
+- Correct the spelling of `TagEditor`'s named parameter, `delimeters` to `delimiters`
+
+A simple tag editor for inputing tags.
 
 ![image](https://user-images.githubusercontent.com/18391546/82047483-dc8f0f00-96ed-11ea-8a91-7eaa64e2358b.gif)
 
 ## Usage
+
 Add the package to pubspec.yaml
 
 ```dart
@@ -23,7 +28,7 @@ Use the widget
 ```dart
 TagEditor(
   length: values.length,
-  delimeters: [',', ' '],
+  delimiters: [',', ' '],
   hasAddButton: true,
   inputDecoration: const InputDecoration(
     border: InputBorder.none,
