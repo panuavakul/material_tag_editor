@@ -111,8 +111,8 @@ class _TagsEditorState extends State<TagEditor> {
   @override
   void initState() {
     super.initState();
-    _focusNode = widget.focusNode ?? FocusNode();
-    _focusNode.addListener(_onFocusChanged);
+    _focusNode = (widget.focusNode ?? FocusNode())
+      ..addListener(_onFocusChanged);
   }
 
   void _onFocusChanged() {
