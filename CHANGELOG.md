@@ -1,3 +1,15 @@
+## [0.0.6] - 2020/11/17.
+
+### Breaking Changes!
+
+- Correct the spelling of `TagEditor`'s named parameter, `delimeters` to `delimiters`
+  - [PR](https://github.com/panuavakul/material_tag_editor/pull/15/files#diff-72fd825ad17ce7800a2078e06f0dff1e12836ee59760465e78d9a5d222cebd15R52)
+
+Feature
+
+- Expose focusNode
+  - https://github.com/panuavakul/material_tag_editor/pull/15
+
 ## [0.0.5] - 2020/11/10.
 
 Feature
