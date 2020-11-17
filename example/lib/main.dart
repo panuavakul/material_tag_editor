@@ -28,6 +28,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<String> values = [];
+  final FocusNode _focusNode = FocusNode();
 
   onDelete(index) {
     setState(() {
@@ -49,7 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               TagEditor(
                 length: values.length,
-                delimeters: [',', ' '],
+                focusNode: _focusNode,
+                delimiters: [',', ' '],
                 hasAddButton: true,
                 resetTextOnSubmitted: true,
                 textStyle: TextStyle(color: Colors.grey),
