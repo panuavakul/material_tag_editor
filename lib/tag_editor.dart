@@ -164,7 +164,7 @@ class _TagsEditorState extends State<TagEditor> {
       case Brightness.light:
         return Colors.black45;
       default:
-        return themeData.iconTheme.color;
+        return null;
     }
   }
 
