@@ -33,10 +33,7 @@ class TagEditor extends StatefulWidget {
     this.resetTextOnSubmitted = false,
     this.onSubmitted,
     this.keyboardAppearance,
-  })  : assert(length != null),
-        assert(tagBuilder != null),
-        assert(onTagChanged != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// The number of tags currently shown.
   final int length;

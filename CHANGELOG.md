@@ -1,3 +1,12 @@
+## [0.1.0] - 2021/03/04.
+
+## Breaking changes!
+
+Feature
+
+- Update package for sound null safety
+- Update example for sound null safety
+
 ## [0.0.6] - 2020/11/17.
 
 ### Breaking Changes!
