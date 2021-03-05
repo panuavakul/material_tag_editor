@@ -146,7 +146,7 @@ class _TagsEditorState extends State<TagEditor> {
   }
 
   void _onSubmitted(String string) {
-    widget.onSubmitted!(string);
+    widget.onSubmitted?.call(string);
     if (widget.resetTextOnSubmitted) {
       _textFieldController.text = '';
     }
