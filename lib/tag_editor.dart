@@ -103,7 +103,7 @@ class _TagsEditorState extends State<TagEditor> {
   var _isFocused = false;
 
   /// Focus node for checking if the [TextField] is focused.
-  FocusNode? _focusNode;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
@@ -114,7 +114,7 @@ class _TagsEditorState extends State<TagEditor> {
 
   void _onFocusChanged() {
     setState(() {
-      _isFocused = _focusNode!.hasFocus;
+      _isFocused = _focusNode.hasFocus;
     });
   }
 
@@ -170,7 +170,7 @@ class _TagsEditorState extends State<TagEditor> {
 
   /// Shamelessly copied from [InputDecorator]
   Color _getActiveColor(ThemeData themeData) {
-    if (_focusNode!.hasFocus) {
+    if (_focusNode.hasFocus) {
       switch (themeData.brightness) {
         case Brightness.dark:
           return themeData.accentColor;
