@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 
 class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
   TagEditorLayoutDelegate({
-    @required this.length,
+    required this.length,
     this.minTextWidth = 160,
     this.spacing = 4.0,
   });
@@ -24,10 +24,10 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
   }
 
   static bool isOverflow({
-    @required double childWidth,
-    @required double parentWidth,
-    @required List<Size> tagSizes,
-    @required double spacing,
+    required double childWidth,
+    required double parentWidth,
+    required List<Size> tagSizes,
+    required double spacing,
   }) {
     final tagsWidth = tagSizes.fold<double>(0, (result, tag) {
       return result + tag.width;

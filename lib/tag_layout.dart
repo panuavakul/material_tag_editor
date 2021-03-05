@@ -6,13 +6,13 @@ import './tag_render_layout_box.dart';
 /// overrided [createRenderObject] to use custom [RenderCustomMultiChildLayoutBox]
 class TagLayout extends CustomMultiChildLayout {
   TagLayout({
-    Key key,
-    @required TagEditorLayoutDelegate delegate,
+    Key? key,
+    required TagEditorLayoutDelegate delegate,
     List<Widget> children = const <Widget>[],
   }) : super(key: key, children: children, delegate: delegate);
 
   @override
   TagRenderLayoutBox createRenderObject(BuildContext context) {
-    return TagRenderLayoutBox(delegate: delegate);
+    return TagRenderLayoutBox(delegate: delegate as TagEditorLayoutDelegate);
   }
 }
