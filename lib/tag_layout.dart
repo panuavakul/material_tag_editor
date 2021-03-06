@@ -9,10 +9,16 @@ class TagLayout extends CustomMultiChildLayout {
     Key? key,
     required TagEditorLayoutDelegate delegate,
     List<Widget> children = const <Widget>[],
+    this.afterFirstLayout,
   }) : super(key: key, children: children, delegate: delegate);
+
+  final ValueChanged<Size>? afterFirstLayout;
 
   @override
   TagRenderLayoutBox createRenderObject(BuildContext context) {
-    return TagRenderLayoutBox(delegate: delegate as TagEditorLayoutDelegate);
+    return TagRenderLayoutBox(
+      delegate: delegate as TagEditorLayoutDelegate,
+      afterFirstLayout: afterFirstLayout,
+    );
   }
 }

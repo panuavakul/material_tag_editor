@@ -7,6 +7,7 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
     required this.length,
     this.minTextWidth = 160,
     this.spacing = 4.0,
+    this.textFieldHeight,
   });
 
   static const tagId = 'tag_';
@@ -15,8 +16,8 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
   final int length;
   final double minTextWidth;
   final double spacing;
+  final double? textFieldHeight;
 
-  /// This is used for
   Size parentSize = Size.zero;
 
   static String getTagId(int id) {
@@ -53,9 +54,11 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
       if (hasChild(getTagId(index))) {
         final childSize = layoutChild(
           tagId,
-          BoxConstraints.loose(
-            //* Let child specify it's own heigh so use infinity here
-            Size(size.width, double.infinity),
+          BoxConstraints(
+            minWidth: 0,
+            maxWidth: size.width,
+            minHeight: textFieldHeight ?? 0,
+            maxHeight: textFieldHeight ?? double.infinity,
           ),
         );
 
@@ -69,7 +72,7 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
           //* Push the cursor down and back to the left
           cursor = Offset(0, cursor.dy + childSize.height);
 
-          //* Reset the tagSizes for this roll
+          //* Reset the tagSizes for this row
           tagSizes = <Size>[];
         }
 
@@ -101,7 +104,12 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
       )) {
         textFieldSize = layoutChild(
           textFieldId,
-          BoxConstraints.loose(Size.fromWidth(size.width)),
+          BoxConstraints(
+            minWidth: 0,
+            maxWidth: size.width,
+            minHeight: textFieldHeight ?? 0,
+            maxHeight: textFieldHeight ?? double.infinity,
+          ),
         );
         //* Push the cursor down and back to the left
         cursor = Offset(0, cursor.dy + textFieldSize.height);
@@ -111,7 +119,12 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
       } else {
         textFieldSize = layoutChild(
           textFieldId,
-          BoxConstraints.loose(Size.fromWidth(textWidth)),
+          BoxConstraints(
+            minWidth: 0,
+            maxWidth: textWidth,
+            minHeight: textFieldHeight ?? 0,
+            maxHeight: textFieldHeight ?? double.infinity,
+          ),
         );
       }
       positionChild(textFieldId, cursor);

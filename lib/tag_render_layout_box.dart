@@ -8,13 +8,22 @@ class TagRenderLayoutBox extends RenderCustomMultiChildLayoutBox {
   TagRenderLayoutBox({
     List<RenderBox>? children,
     required TagEditorLayoutDelegate delegate,
+    this.afterFirstLayout,
   }) : super(children: children, delegate: delegate);
+
+  final ValueChanged<Size>? afterFirstLayout;
+
+  bool _didFinishedFirstLayout = false;
 
   @override
   void performLayout() {
     super.performLayout();
-
     //* Set the parent size here
-    size = (delegate as TagEditorLayoutDelegate).parentSize;
+    final tagEditorLayoutDelegate = delegate as TagEditorLayoutDelegate;
+    size = tagEditorLayoutDelegate.parentSize;
+    if (!_didFinishedFirstLayout) {
+      _didFinishedFirstLayout = true;
+      afterFirstLayout?.call(size);
+    }
   }
 }

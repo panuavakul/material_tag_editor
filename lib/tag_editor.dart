@@ -106,6 +106,16 @@ class _TagsEditorState extends State<TagEditor> {
   /// Focus node for checking if the [TextField] is focused.
   late FocusNode _focusNode;
 
+  /// This is the height of the TextField.
+  /// As of now there is a problem with Flutter Web that when,
+  /// child layout with constraints that aren't tight,
+  /// the layout function give size that is tight anyway causing
+  /// the tags to position it self incorrectly so have to
+  /// get the textfielf height after the first layout and then
+  /// set it here to use after the first tag is input.
+  /// I don't like this too, but can't think of any other workaround for now
+  double? _textFieldHeight;
+
   @override
   void initState() {
     super.initState();
@@ -207,7 +217,13 @@ class _TagsEditorState extends State<TagEditor> {
 
     final tagEditorArea = Container(
       child: TagLayout(
-        delegate: TagEditorLayoutDelegate(length: widget.length),
+        afterFirstLayout: (initalSize) {
+          _textFieldHeight = initalSize.height;
+        },
+        delegate: TagEditorLayoutDelegate(
+          length: widget.length,
+          textFieldHeight: _textFieldHeight,
+        ),
         children: List<Widget>.generate(
               widget.length,
               (index) => LayoutId(
