@@ -160,7 +160,7 @@ class _TagsEditorState extends State<TagEditor> {
   }
 
   /// Shamelessly copied from [InputDecorator]
-  Color? _getDefaultIconColor(ThemeData themeData) {
+  Color _getDefaultIconColor(ThemeData themeData) {
     if (!widget.enabled) {
       return themeData.disabledColor;
     }
@@ -170,8 +170,6 @@ class _TagsEditorState extends State<TagEditor> {
         return Colors.white70;
       case Brightness.light:
         return Colors.black45;
-      default:
-        return null;
     }
   }
 
@@ -188,7 +186,7 @@ class _TagsEditorState extends State<TagEditor> {
     return themeData.hintColor;
   }
 
-  Color? _getIconColor(ThemeData themeData) {
+  Color _getIconColor(ThemeData themeData) {
     final themeData = Theme.of(context);
     final activeColor = _getActiveColor(themeData);
     return _isFocused ? activeColor : _getDefaultIconColor(themeData);
