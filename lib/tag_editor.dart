@@ -5,7 +5,6 @@ import './tag_layout.dart';
 
 /// A [Widget] for editing tag similar to Google's Gmail
 /// email address input widget in the iOS app.
-/// TODO: Support remove while typing
 class TagEditor extends StatefulWidget {
   const TagEditor({
     required this.length,
@@ -18,6 +17,7 @@ class TagEditor extends StatefulWidget {
     this.icon,
     this.enabled = true,
     // TextField's properties
+    this.controller,
     this.textStyle,
     this.inputDecoration = const InputDecoration(),
     this.keyboardType,
@@ -73,6 +73,7 @@ class TagEditor extends StatefulWidget {
   /// [TextField]'s properties.
   ///
   /// Please refer to [TextField] documentation.
+  final TextEditingController? controller;
   final bool enabled;
   final TextStyle? textStyle;
   final InputDecoration inputDecoration;
@@ -94,7 +95,7 @@ class TagEditor extends StatefulWidget {
 
 class _TagsEditorState extends State<TagEditor> {
   /// A controller to keep value of the [TextField].
-  final _textFieldController = TextEditingController();
+  late TextEditingController _textFieldController;
 
   /// A state variable for checking if new text is enter.
   var _previousText = '';
@@ -108,6 +109,7 @@ class _TagsEditorState extends State<TagEditor> {
   @override
   void initState() {
     super.initState();
+    _textFieldController = (widget.controller ?? TextEditingController());
     _focusNode = (widget.focusNode ?? FocusNode())
       ..addListener(_onFocusChanged);
   }
@@ -121,7 +123,7 @@ class _TagsEditorState extends State<TagEditor> {
   void _onTagChanged(String string) {
     if (string.isNotEmpty) {
       widget.onTagChanged(string);
-      _textFieldController.text = '';
+      _resetTextField();
     }
   }
 
@@ -148,8 +150,13 @@ class _TagsEditorState extends State<TagEditor> {
   void _onSubmitted(String string) {
     widget.onSubmitted?.call(string);
     if (widget.resetTextOnSubmitted) {
-      _textFieldController.text = '';
+      _resetTextField();
     }
+  }
+
+  void _resetTextField() {
+    _textFieldController.text = '';
+    _previousText = '';
   }
 
   /// Shamelessly copied from [InputDecorator]

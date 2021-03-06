@@ -27,13 +27,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> values = [];
+  List<String> _values = [];
   final FocusNode _focusNode = FocusNode();
+  final TextEditingController _textEditingController = TextEditingController();
 
-  onDelete(index) {
+  _onDelete(index) {
     setState(() {
-      values.removeAt(index);
+      _values.removeAt(index);
     });
+  }
+
+  /// This is just an example for using `TextEditingController` to manipulate
+  /// the the `TextField` just like a normal `TextField`.
+  _onPressedModifyTextField() {
+    final text = 'Test';
+    _textEditingController.text = text;
+    _textEditingController.value = _textEditingController.value.copyWith(
+      text: text,
+      selection: TextSelection(
+        baseOffset: text.length,
+        extentOffset: text.length,
+      ),
+    );
   }
 
   @override
@@ -49,15 +64,17 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TagEditor(
-                length: values.length,
+                length: _values.length,
+                controller: _textEditingController,
                 focusNode: _focusNode,
                 delimiters: [',', ' '],
                 hasAddButton: true,
                 resetTextOnSubmitted: true,
+                // This is set to grey just to illustrate the `textStyle` prop
                 textStyle: TextStyle(color: Colors.grey),
                 onSubmitted: (outstandingValue) {
                   setState(() {
-                    values.add(outstandingValue);
+                    _values.add(outstandingValue);
                   });
                 },
                 inputDecoration: const InputDecoration(
@@ -66,14 +83,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 onTagChanged: (newValue) {
                   setState(() {
-                    values.add(newValue);
+                    _values.add(newValue);
                   });
                 },
                 tagBuilder: (context, index) => _Chip(
                   index: index,
-                  label: values[index],
-                  onDeleted: onDelete,
+                  label: _values[index],
+                  onDeleted: _onDelete,
                 ),
+              ),
+              Divider(),
+              // This is just a button to illustrate how to use
+              // TextEditingController to set the value
+              // or do whatever you want with it
+              ElevatedButton(
+                onPressed: _onPressedModifyTextField,
+                child: Text('Use Controlelr to Set Value'),
               ),
             ],
           ),
