@@ -8,6 +8,8 @@ import './tag_layout.dart';
 class TagEditor extends StatefulWidget {
   const TagEditor({
     required this.length,
+    this.minTextFieldWidth = 160.0,
+    this.tagSpacing = 4.0,
     required this.tagBuilder,
     required this.onTagChanged,
     Key? key,
@@ -37,6 +39,12 @@ class TagEditor extends StatefulWidget {
 
   /// The number of tags currently shown.
   final int length;
+
+  /// The minimum width that the `TextField` should take
+  final double minTextFieldWidth;
+
+  /// The spacing between each tag
+  final double tagSpacing;
 
   /// Builder for building the tags, this usually use Flutter's Material `Chip`.
   final Widget Function(BuildContext, int) tagBuilder;
@@ -127,11 +135,20 @@ class _TagsEditorState extends State<TagEditor> {
     }
   }
 
+  /// This function is still ugly, have to fix this later
   void _onTextFieldChange(String string) {
-    // This function looks ugly fix this
     final previousText = _previousText;
     _previousText = string;
+
     if (string.isEmpty || widget.delimiters.isEmpty) {
+      return;
+    }
+
+    // Do not allow the entry of the delimters, this does not account for when
+    // the text is set with `TextEditingController` the behaviour of TextEditingContoller
+    // should be controller by the developer themselves
+    if (string.length == 1 && widget.delimiters.contains(string)) {
+      _resetTextField();
       return;
     }
 
@@ -198,16 +215,20 @@ class _TagsEditorState extends State<TagEditor> {
         ? widget.inputDecoration.copyWith(
             suffixIcon: CupertinoButton(
             padding: EdgeInsets.zero,
-            child: Icon(Icons.add),
             onPressed: () {
               _onTagChanged(_textFieldController.text);
             },
+            child: const Icon(Icons.add),
           ))
         : widget.inputDecoration;
 
     final tagEditorArea = Container(
       child: TagLayout(
-        delegate: TagEditorLayoutDelegate(length: widget.length),
+        delegate: TagEditorLayoutDelegate(
+          length: widget.length,
+          minTextFieldWidth: widget.minTextFieldWidth,
+          spacing: widget.tagSpacing,
+        ),
         children: List<Widget>.generate(
               widget.length,
               (index) => LayoutId(

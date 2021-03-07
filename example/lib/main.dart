@@ -60,8 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: ListView(
             children: <Widget>[
               TagEditor(
                 length: _values.length,
@@ -71,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 hasAddButton: true,
                 resetTextOnSubmitted: true,
                 // This is set to grey just to illustrate the `textStyle` prop
-                textStyle: TextStyle(color: Colors.grey),
+                textStyle: const TextStyle(color: Colors.grey),
                 onSubmitted: (outstandingValue) {
                   setState(() {
                     _values.add(outstandingValue);
@@ -92,13 +91,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   onDeleted: _onDelete,
                 ),
               ),
-              Divider(),
+              const Divider(),
               // This is just a button to illustrate how to use
               // TextEditingController to set the value
               // or do whatever you want with it
               ElevatedButton(
                 onPressed: _onPressedModifyTextField,
-                child: Text('Use Controlelr to Set Value'),
+                child: const Text('Use Controlelr to Set Value'),
               ),
             ],
           ),
@@ -124,7 +123,7 @@ class _Chip extends StatelessWidget {
     return Chip(
       labelPadding: const EdgeInsets.only(left: 8.0),
       label: Text(label),
-      deleteIcon: Icon(
+      deleteIcon: const Icon(
         Icons.close,
         size: 18,
       ),

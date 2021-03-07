@@ -5,15 +5,15 @@ import 'package:flutter/rendering.dart';
 class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
   TagEditorLayoutDelegate({
     required this.length,
-    this.minTextWidth = 160,
-    this.spacing = 4.0,
+    required this.minTextFieldWidth,
+    required this.spacing,
   });
 
   static const tagId = 'tag_';
   static const textFieldId = 'text_field';
 
   final int length;
-  final double minTextWidth;
+  final double minTextFieldWidth;
   final double spacing;
 
   /// This is used for
@@ -23,7 +23,7 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
     return '$tagId$id';
   }
 
-  static bool isOverflow({
+  static bool _isOverflow({
     required double childWidth,
     required double parentWidth,
     required List<Size> tagSizes,
@@ -60,7 +60,7 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
         );
 
         //* Check if overflowing
-        if (isOverflow(
+        if (_isOverflow(
           childWidth: childSize.width,
           parentWidth: size.width,
           tagSizes: tagSizes,
@@ -90,10 +90,10 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
       });
       final spacingWidth = spacing * max(tagSizes.length - 1, 0);
       final leftOverWidth = size.width - currentRowWidth - spacingWidth;
-      final textWidth = max(leftOverWidth, minTextWidth);
+      final textWidth = max(leftOverWidth, minTextFieldWidth);
       //* Check if Textbox is overflowing
       //* Check if overflowing
-      if (isOverflow(
+      if (_isOverflow(
         childWidth: textWidth,
         parentWidth: size.width,
         tagSizes: tagSizes,
