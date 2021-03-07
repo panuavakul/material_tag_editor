@@ -1,3 +1,10 @@
+## [0.1.0-web.0] - 2021/3/7
+
+Feature
+
+- Adding some weird workaround for web
+  - [PR](https://github.com/panuavakul/material_tag_editor/pull/26)
+
 ## [0.1.0] - 2021/03/04.
 
 ## Breaking changes!
