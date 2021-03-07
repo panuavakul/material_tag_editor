@@ -8,6 +8,8 @@ import './tag_layout.dart';
 class TagEditor extends StatefulWidget {
   const TagEditor({
     required this.length,
+    this.minTextFieldWidth = 160.0,
+    this.tagSpacing = 4.0,
     required this.tagBuilder,
     required this.onTagChanged,
     Key? key,
@@ -37,6 +39,12 @@ class TagEditor extends StatefulWidget {
 
   /// The number of tags currently shown.
   final int length;
+
+  /// The minimum width that the `TextField` should take
+  final double minTextFieldWidth;
+
+  /// The spacing between each tag
+  final double tagSpacing;
 
   /// Builder for building the tags, this usually use Flutter's Material `Chip`.
   final Widget Function(BuildContext, int) tagBuilder;
@@ -207,7 +215,11 @@ class _TagsEditorState extends State<TagEditor> {
 
     final tagEditorArea = Container(
       child: TagLayout(
-        delegate: TagEditorLayoutDelegate(length: widget.length),
+        delegate: TagEditorLayoutDelegate(
+          length: widget.length,
+          minTextFieldWidth: widget.minTextFieldWidth,
+          spacing: widget.tagSpacing,
+        ),
         children: List<Widget>.generate(
               widget.length,
               (index) => LayoutId(

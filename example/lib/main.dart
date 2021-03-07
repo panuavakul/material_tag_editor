@@ -60,11 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: ListView(
             children: <Widget>[
               TagEditor(
                 length: _values.length,
+                tagSpacing: 24,
+                minTextFieldWidth: 80,
                 controller: _textEditingController,
                 focusNode: _focusNode,
                 delimiters: [',', ' '],
