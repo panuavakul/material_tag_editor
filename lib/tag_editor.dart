@@ -5,19 +5,19 @@ import './tag_layout.dart';
 
 /// A [Widget] for editing tag similar to Google's Gmail
 /// email address input widget in the iOS app.
-/// TODO: Support remove while typing
 class TagEditor extends StatefulWidget {
   const TagEditor({
-    @required this.length,
-    @required this.tagBuilder,
-    @required this.onTagChanged,
-    Key key,
+    required this.length,
+    required this.tagBuilder,
+    required this.onTagChanged,
+    Key? key,
     this.focusNode,
     this.hasAddButton = true,
     this.delimiters = const [],
     this.icon,
     this.enabled = true,
     // TextField's properties
+    this.controller,
     this.textStyle,
     this.inputDecoration = const InputDecoration(),
     this.keyboardType,
@@ -33,10 +33,7 @@ class TagEditor extends StatefulWidget {
     this.resetTextOnSubmitted = false,
     this.onSubmitted,
     this.keyboardAppearance,
-  })  : assert(length != null),
-        assert(tagBuilder != null),
-        assert(onTagChanged != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// The number of tags currently shown.
   final int length;
@@ -48,7 +45,7 @@ class TagEditor extends StatefulWidget {
   final bool hasAddButton;
 
   /// The icon for the add button enabled with `hasAddButton`.
-  final IconData icon;
+  final IconData? icon;
 
   /// Callback for when the tag changed. Use this to get the new tag and add
   /// it to the state.
@@ -68,28 +65,29 @@ class TagEditor extends StatefulWidget {
   /// Called when the user are done editing the text in the [TextField]
   /// Use this to get the outstanding text that aren't converted to tag yet
   /// If no text is entered when this is called an empty string will be passed.
-  final ValueChanged<String> onSubmitted;
+  final ValueChanged<String>? onSubmitted;
 
   /// Focus node for checking if the [TextField] is focused.
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
 
   /// [TextField]'s properties.
   ///
   /// Please refer to [TextField] documentation.
+  final TextEditingController? controller;
   final bool enabled;
-  final TextStyle textStyle;
+  final TextStyle? textStyle;
   final InputDecoration inputDecoration;
-  final TextInputType keyboardType;
-  final TextInputAction textInputAction;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
   final TextCapitalization textCapitalization;
   final TextAlign textAlign;
-  final TextDirection textDirection;
+  final TextDirection? textDirection;
   final bool autofocus;
   final bool autocorrect;
   final bool enableSuggestions;
   final int maxLines;
   final bool readOnly;
-  final Brightness keyboardAppearance;
+  final Brightness? keyboardAppearance;
 
   @override
   _TagsEditorState createState() => _TagsEditorState();
@@ -97,7 +95,7 @@ class TagEditor extends StatefulWidget {
 
 class _TagsEditorState extends State<TagEditor> {
   /// A controller to keep value of the [TextField].
-  final _textFieldController = TextEditingController();
+  late TextEditingController _textFieldController;
 
   /// A state variable for checking if new text is enter.
   var _previousText = '';
@@ -106,11 +104,12 @@ class _TagsEditorState extends State<TagEditor> {
   var _isFocused = false;
 
   /// Focus node for checking if the [TextField] is focused.
-  FocusNode _focusNode;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
+    _textFieldController = (widget.controller ?? TextEditingController());
     _focusNode = (widget.focusNode ?? FocusNode())
       ..addListener(_onFocusChanged);
   }
@@ -124,7 +123,7 @@ class _TagsEditorState extends State<TagEditor> {
   void _onTagChanged(String string) {
     if (string.isNotEmpty) {
       widget.onTagChanged(string);
-      _textFieldController.text = '';
+      _resetTextField();
     }
   }
 
@@ -149,10 +148,15 @@ class _TagsEditorState extends State<TagEditor> {
   }
 
   void _onSubmitted(String string) {
-    widget.onSubmitted(string);
+    widget.onSubmitted?.call(string);
     if (widget.resetTextOnSubmitted) {
-      _textFieldController.text = '';
+      _resetTextField();
     }
+  }
+
+  void _resetTextField() {
+    _textFieldController.text = '';
+    _previousText = '';
   }
 
   /// Shamelessly copied from [InputDecorator]
@@ -166,8 +170,6 @@ class _TagsEditorState extends State<TagEditor> {
         return Colors.white70;
       case Brightness.light:
         return Colors.black45;
-      default:
-        return themeData.iconTheme.color;
     }
   }
 

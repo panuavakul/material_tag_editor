@@ -1,3 +1,17 @@
+## [0.1.0] - 2021/03/04.
+
+## Breaking changes!
+
+- Update package for sound null safety
+  - [PR](https://github.com/panuavakul/material_tag_editor/pull/23)
+- Update example for sound null safety
+  - [PR](https://github.com/panuavakul/material_tag_editor/pull/23)
+
+Feature
+
+- Expose TextEditingController for text manipulation and getting value
+  - [PR](https://github.com/panuavakul/material_tag_editor/pull/24)
+
 ## [0.0.6] - 2020/11/17.
 
 ### Breaking Changes!
