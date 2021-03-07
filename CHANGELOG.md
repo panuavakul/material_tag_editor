@@ -1,3 +1,12 @@
+## [0.1.1] - 2021/03/07.
+
+Feature
+
+- Expose minTextViewWidth and tagSpacing for easy customization
+  - [PR](https://github.com/panuavakul/material_tag_editor/pull/28)
+- Prevent delimiter from being enter into the TextField preventing empty tag from being created
+  - [PR](https://github.com/panuavakul/material_tag_editor/pull/31)
+
 ## [0.1.0] - 2021/03/04.
 
 ## Breaking changes!
