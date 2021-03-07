@@ -63,48 +63,33 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Container(
-                color: Colors.purple,
-                child: TextField(
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Hint Text...',
-                  ),
+              TagEditor(
+                length: _values.length,
+                controller: _textEditingController,
+                focusNode: _focusNode,
+                delimiters: [',', ' '],
+                hasAddButton: true,
+                resetTextOnSubmitted: true,
+                // This is set to grey just to illustrate the `textStyle` prop
+                textStyle: TextStyle(color: Colors.grey),
+                onSubmitted: (outstandingValue) {
+                  setState(() {
+                    _values.add(outstandingValue);
+                  });
+                },
+                inputDecoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Hint Text...',
                 ),
-              ),
-              Container(
-                color: Colors.yellow,
-                child: TagEditor(
-                  length: _values.length,
-                  controller: _textEditingController,
-                  focusNode: _focusNode,
-                  delimiters: [',', ' '],
-                  hasAddButton: true,
-                  resetTextOnSubmitted: true,
-                  // This is set to grey just to illustrate the `textStyle` prop
-                  textStyle: TextStyle(color: Colors.grey),
-                  onSubmitted: (outstandingValue) {
-                    setState(() {
-                      _values.add(outstandingValue);
-                    });
-                  },
-                  inputDecoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Hint Text...',
-                  ),
-                  onTagChanged: (newValue) {
-                    setState(() {
-                      _values.add(newValue);
-                    });
-                  },
-                  tagBuilder: (context, index) => Container(
-                    color: Colors.red,
-                    child: _Chip(
-                      index: index,
-                      label: _values[index],
-                      onDeleted: _onDelete,
-                    ),
-                  ),
+                onTagChanged: (newValue) {
+                  setState(() {
+                    _values.add(newValue);
+                  });
+                },
+                tagBuilder: (context, index) => _Chip(
+                  index: index,
+                  label: _values[index],
+                  onDeleted: _onDelete,
                 ),
               ),
               Divider(),
