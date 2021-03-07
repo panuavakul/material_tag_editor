@@ -135,11 +135,20 @@ class _TagsEditorState extends State<TagEditor> {
     }
   }
 
+  /// This function is still ugly, have to fix this later
   void _onTextFieldChange(String string) {
-    // This function looks ugly fix this
     final previousText = _previousText;
     _previousText = string;
+
     if (string.isEmpty || widget.delimiters.isEmpty) {
+      return;
+    }
+
+    // Do not allow the entry of the delimters, this does not account for when
+    // the text is set with `TextEditingController` the behaviour of TextEditingContoller
+    // should be controller by the developer themselves
+    if (string.length == 1 && widget.delimiters.contains(string)) {
+      _resetTextField();
       return;
     }
 

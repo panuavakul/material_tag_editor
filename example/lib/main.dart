@@ -64,8 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               TagEditor(
                 length: _values.length,
-                tagSpacing: 24,
-                minTextFieldWidth: 80,
                 controller: _textEditingController,
                 focusNode: _focusNode,
                 delimiters: [',', ' '],
