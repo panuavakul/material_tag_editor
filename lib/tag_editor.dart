@@ -206,10 +206,10 @@ class _TagsEditorState extends State<TagEditor> {
         ? widget.inputDecoration.copyWith(
             suffixIcon: CupertinoButton(
             padding: EdgeInsets.zero,
-            child: Icon(Icons.add),
             onPressed: () {
               _onTagChanged(_textFieldController.text);
             },
+            child: const Icon(Icons.add),
           ))
         : widget.inputDecoration;
 
