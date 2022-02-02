@@ -1,3 +1,12 @@
+## [0.1.2] - 2022/02/02.
+
+Feature
+
+- Expose inputFormatter for precustomizing the textField
+  - [PR](https://github.com/panuavakul/material_tag_editor/pull/35)
+- Upgrade flutter to 2.8.1
+  - [PR](https://github.com/panuavakul/material_tag_editor/pull/36)
+
 ## [0.1.1] - 2021/03/07.
 
 Feature
