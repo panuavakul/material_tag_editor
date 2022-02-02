@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:material_tag_editor/tag_editor.dart';
 
@@ -90,6 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: _values[index],
                   onDeleted: _onDelete,
                 ),
+                // InputFormatters example, this disallow \ and /
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(RegExp(r'[/\\]'))
+                ],
               ),
               const Divider(),
               // This is just a button to illustrate how to use

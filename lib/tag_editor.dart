@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import './tag_editor_layout_delegate.dart';
 import './tag_layout.dart';
 
@@ -34,6 +36,7 @@ class TagEditor extends StatefulWidget {
     this.maxLines = 1,
     this.resetTextOnSubmitted = false,
     this.onSubmitted,
+    this.inputFormatters,
     this.keyboardAppearance,
   }) : super(key: key);
 
@@ -94,6 +97,7 @@ class TagEditor extends StatefulWidget {
   final bool autocorrect;
   final bool enableSuggestions;
   final int maxLines;
+  final List<TextInputFormatter>? inputFormatters;
   final bool readOnly;
   final Brightness? keyboardAppearance;
 
@@ -195,7 +199,7 @@ class _TagsEditorState extends State<TagEditor> {
     if (_focusNode.hasFocus) {
       switch (themeData.brightness) {
         case Brightness.dark:
-          return themeData.accentColor;
+          return themeData.colorScheme.secondary;
         case Brightness.light:
           return themeData.primaryColor;
       }
@@ -258,6 +262,7 @@ class _TagsEditorState extends State<TagEditor> {
                   decoration: decoration,
                   onChanged: _onTextFieldChange,
                   onSubmitted: _onSubmitted,
+                  inputFormatters: widget.inputFormatters,
                 ),
               )
             ],
