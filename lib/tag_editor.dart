@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import './tag_editor_layout_delegate.dart';
 import './tag_layout.dart';
 
@@ -34,6 +36,7 @@ class TagEditor extends StatefulWidget {
     this.maxLines = 1,
     this.resetTextOnSubmitted = false,
     this.onSubmitted,
+    this.inputFormatters,
     this.keyboardAppearance,
   }) : super(key: key);
 
@@ -94,6 +97,7 @@ class TagEditor extends StatefulWidget {
   final bool autocorrect;
   final bool enableSuggestions;
   final int maxLines;
+  final List<TextInputFormatter>? inputFormatters;
   final bool readOnly;
   final Brightness? keyboardAppearance;
 
@@ -114,12 +118,15 @@ class _TagsEditorState extends State<TagEditor> {
   /// Focus node for checking if the [TextField] is focused.
   late FocusNode _focusNode;
 
+  /// text input formatter for tag TextField
+  List<TextInputFormatter>? _inputFormatters;
+
   @override
   void initState() {
     super.initState();
     _textFieldController = (widget.controller ?? TextEditingController());
-    _focusNode = (widget.focusNode ?? FocusNode())
-      ..addListener(_onFocusChanged);
+    _focusNode = (widget.focusNode ?? FocusNode())..addListener(_onFocusChanged);
+    _inputFormatters = widget.inputFormatters;
   }
 
   void _onFocusChanged() {
@@ -258,6 +265,7 @@ class _TagsEditorState extends State<TagEditor> {
                   decoration: decoration,
                   onChanged: _onTextFieldChange,
                   onSubmitted: _onSubmitted,
+                  inputFormatters: _inputFormatters,
                 ),
               )
             ],
