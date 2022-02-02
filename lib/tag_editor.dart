@@ -118,15 +118,12 @@ class _TagsEditorState extends State<TagEditor> {
   /// Focus node for checking if the [TextField] is focused.
   late FocusNode _focusNode;
 
-  /// text input formatter for tag TextField
-  List<TextInputFormatter>? _inputFormatters;
-
   @override
   void initState() {
     super.initState();
     _textFieldController = (widget.controller ?? TextEditingController());
-    _focusNode = (widget.focusNode ?? FocusNode())..addListener(_onFocusChanged);
-    _inputFormatters = widget.inputFormatters;
+    _focusNode = (widget.focusNode ?? FocusNode())
+      ..addListener(_onFocusChanged);
   }
 
   void _onFocusChanged() {
@@ -202,7 +199,7 @@ class _TagsEditorState extends State<TagEditor> {
     if (_focusNode.hasFocus) {
       switch (themeData.brightness) {
         case Brightness.dark:
-          return themeData.accentColor;
+          return themeData.colorScheme.secondary;
         case Brightness.light:
           return themeData.primaryColor;
       }
@@ -265,7 +262,7 @@ class _TagsEditorState extends State<TagEditor> {
                   decoration: decoration,
                   onChanged: _onTextFieldChange,
                   onSubmitted: _onSubmitted,
-                  inputFormatters: _inputFormatters,
+                  inputFormatters: widget.inputFormatters,
                 ),
               )
             ],
