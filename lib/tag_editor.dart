@@ -1,19 +1,29 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_tag_editor/suggestions_box_controller.dart';
 
 import './tag_editor_layout_delegate.dart';
 import './tag_layout.dart';
 
+typedef SuggestionBuilder<T> = Widget Function(BuildContext context, TagsEditorState<T> state, T data);
+typedef InputSuggestions<T> = FutureOr<List<T>> Function(String query);
+typedef SearchSuggestions<T> = FutureOr<List<T>> Function();
+
 /// A [Widget] for editing tag similar to Google's Gmail
 /// email address input widget in the iOS app.
-class TagEditor extends StatefulWidget {
+class TagEditor<T> extends StatefulWidget {
   const TagEditor({
     required this.length,
     this.minTextFieldWidth = 160.0,
     this.tagSpacing = 4.0,
     required this.tagBuilder,
     required this.onTagChanged,
+    required this.suggestionBuilder,
+    required this.findSuggestions,
     Key? key,
     this.focusNode,
     this.hasAddButton = true,
@@ -38,6 +48,12 @@ class TagEditor extends StatefulWidget {
     this.onSubmitted,
     this.inputFormatters,
     this.keyboardAppearance,
+    this.suggestionsBoxMaxHeight,
+    this.suggestionsBoxElevation,
+    this.suggestionsBoxBackgroundColor,
+    this.suggestionsBoxRadius,
+    this.iconSuggestionBox,
+    this.searchAllSuggestions,
   }) : super(key: key);
 
   /// The number of tags currently shown.
@@ -101,11 +117,20 @@ class TagEditor extends StatefulWidget {
   final bool readOnly;
   final Brightness? keyboardAppearance;
 
+  final double? suggestionsBoxMaxHeight;
+  final double? suggestionsBoxElevation;
+  final SuggestionBuilder<T> suggestionBuilder;
+  final InputSuggestions<T> findSuggestions;
+  final SearchSuggestions<T>? searchAllSuggestions;
+  final Color? suggestionsBoxBackgroundColor;
+  final double? suggestionsBoxRadius;
+  final Widget? iconSuggestionBox;
+
   @override
-  _TagsEditorState createState() => _TagsEditorState();
+  TagsEditorState<T> createState() => TagsEditorState<T>();
 }
 
-class _TagsEditorState extends State<TagEditor> {
+class TagsEditorState<T> extends State<TagEditor<T>> {
   /// A controller to keep value of the [TextField].
   late TextEditingController _textFieldController;
 
@@ -118,18 +143,116 @@ class _TagsEditorState extends State<TagEditor> {
   /// Focus node for checking if the [TextField] is focused.
   late FocusNode _focusNode;
 
+  final StreamController<List<T>?> _suggestionsStreamController = StreamController<List<T>?>.broadcast();
+  late SuggestionsBoxController _suggestionsBoxController;
+  final _layerLink = LayerLink();
+  List<T>? _suggestions;
+  int _searchId = 0;
+
+  RenderBox? get renderBox => context.findRenderObject() as RenderBox?;
+
   @override
   void initState() {
     super.initState();
     _textFieldController = (widget.controller ?? TextEditingController());
+
+    _suggestionsBoxController = SuggestionsBoxController(context);
+
     _focusNode = (widget.focusNode ?? FocusNode())
       ..addListener(_onFocusChanged);
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      _createOverlayEntry();
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChanged);
+    _focusNode.dispose();
+    _suggestionsStreamController.close();
+    _suggestionsBoxController.close();
+    super.dispose();
   }
 
   void _onFocusChanged() {
+    if (_focusNode.hasFocus) {
+      _scrollToVisible();
+      _suggestionsBoxController.open();
+    } else {
+      _suggestionsBoxController.close();
+    }
     setState(() {
       _isFocused = _focusNode.hasFocus;
     });
+  }
+
+  void _createOverlayEntry() {
+    _suggestionsBoxController.overlayEntry = OverlayEntry(
+      builder: (context) {
+        if (renderBox != null) {
+          final size = renderBox!.size;
+          final renderBoxOffset = renderBox!.localToGlobal(Offset.zero);
+          final topAvailableSpace = renderBoxOffset.dy;
+          final mq = MediaQuery.of(context);
+          final bottomAvailableSpace = mq.size.height - mq.viewInsets.bottom - renderBoxOffset.dy - size.height;
+          var _suggestionBoxHeight = max(topAvailableSpace, bottomAvailableSpace);
+          if (null != widget.suggestionsBoxMaxHeight) {
+            _suggestionBoxHeight = min(_suggestionBoxHeight, widget.suggestionsBoxMaxHeight!);
+          }
+          final showTop = topAvailableSpace > bottomAvailableSpace;
+          final compositedTransformFollowerOffset = showTop ? Offset(0, -size.height) : Offset.zero;
+
+          return StreamBuilder<List<T>?>(
+            stream: _suggestionsStreamController.stream,
+            initialData: _suggestions,
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                final suggestionsListView = Material(
+                  elevation: widget.suggestionsBoxElevation ?? 20,
+                  borderRadius: BorderRadius.circular(widget.suggestionsBoxRadius ?? 20),
+                  color: widget.suggestionsBoxBackgroundColor ?? Colors.white,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: _suggestionBoxHeight),
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: widget.suggestionsBoxBackgroundColor ?? Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(widget.suggestionsBoxRadius ?? 0))),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            return _suggestions != null && _suggestions?.isNotEmpty == true
+                                ? widget.suggestionBuilder(context, this, _suggestions![index]!)
+                                : Container();
+                          },
+                        )
+                    ),
+                  ),
+                );
+                return Positioned(
+                  width: size.width,
+                  child: CompositedTransformFollower(
+                    link: _layerLink,
+                    showWhenUnlinked: false,
+                    offset: compositedTransformFollowerOffset,
+                    child: !showTop
+                        ? suggestionsListView
+                        : FractionalTranslation(
+                            translation: const Offset(0, -1),
+                            child: suggestionsListView,
+                          ),
+                  ),
+                );
+              }
+              return Container();
+            },
+          );
+        }
+        return Container();
+      },
+    );
   }
 
   void _onTagChanged(String string) {
@@ -141,6 +264,10 @@ class _TagsEditorState extends State<TagEditor> {
 
   /// This function is still ugly, have to fix this later
   void _onTextFieldChange(String string) {
+    if (string != _previousText) {
+      _onSearchChanged(string);
+    }
+
     final previousText = _previousText;
     _previousText = string;
 
@@ -166,6 +293,47 @@ class _TagsEditorState extends State<TagEditor> {
         }
       }
     }
+  }
+
+  void _onSearchChanged(String value) async {
+    final localId = ++_searchId;
+    final results = await widget.findSuggestions(value);
+    if (_searchId == localId && mounted) {
+      setState(() => _suggestions = results);
+    }
+    _suggestionsStreamController.add(_suggestions ?? []);
+    if (!_suggestionsBoxController.isOpened) {
+      _suggestionsBoxController.open();
+    }
+  }
+
+  void _openSuggestionBox() async {
+    if (widget.searchAllSuggestions != null) {
+      final localId = ++_searchId;
+      final results = await widget.searchAllSuggestions!();
+      if (_searchId == localId && mounted) {
+        setState(() => _suggestions = results);
+      }
+      _suggestionsStreamController.add(_suggestions ?? []);
+      if (!_suggestionsBoxController.isOpened) {
+        _suggestionsBoxController.open();
+      }
+    }
+  }
+
+  void _scrollToVisible() {
+    Future.delayed(const Duration(milliseconds: 300), () {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        final renderBox = context.findRenderObject() as RenderBox;
+        await Scrollable.of(context)?.position.ensureVisible(renderBox);
+      });
+    });
+  }
+
+  void selectSuggestion(T data) {
+    _suggestions = null;
+    _suggestionsStreamController.add([]);
+    _resetTextField();
   }
 
   void _onSubmitted(String string) {
@@ -269,26 +437,53 @@ class _TagsEditorState extends State<TagEditor> {
       ),
     );
 
-    return widget.icon == null
-        ? tagEditorArea
-        : Container(
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: 40,
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.zero,
-                  child: IconTheme.merge(
-                    data: IconThemeData(
-                      color: _getIconColor(Theme.of(context)),
-                      size: 18.0,
+    return NotificationListener<SizeChangedLayoutNotification>(
+      onNotification: (SizeChangedLayoutNotification val) {
+        WidgetsBinding.instance?.addPostFrameCallback((_) async {
+          _suggestionsBoxController.overlayEntry?.markNeedsBuild();
+        });
+        return true;
+      },
+      child: SizeChangedLayoutNotifier(
+        child: Column(
+          children: <Widget>[
+            widget.icon == null && widget.iconSuggestionBox == null
+                ? tagEditorArea
+                : Container(
+                    child: Row(
+                        children: <Widget>[
+                          if (widget.hasAddButton)
+                            Container(
+                              width: 40,
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.zero,
+                              child: IconTheme.merge(
+                                data: IconThemeData(
+                                  color: _getIconColor(Theme.of(context)),
+                                  size: 18.0,
+                                ),
+                                child: Icon(widget.icon),
+                              ),
+                            ),
+                          if (widget.iconSuggestionBox != null)
+                            Material(
+                                color: Colors.transparent,
+                                shape: const CircleBorder(),
+                                child: IconButton(
+                                    icon: widget.iconSuggestionBox!,
+                                    splashRadius: 20,
+                                    onPressed: () => _openSuggestionBox())),
+                          Expanded(child: tagEditorArea),
+                        ],
                     ),
-                    child: Icon(widget.icon),
                   ),
-                ),
-                Expanded(child: tagEditorArea),
-              ],
+            CompositedTransformTarget(
+              link: _layerLink,
+              child: Container(),
             ),
-          );
+          ],
+        ),
+      ),
+    );
   }
 }
