@@ -12,6 +12,8 @@ dependencies:
 
   pointer_interceptor: 0.9.1
 
+  debounce_throttle: 2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

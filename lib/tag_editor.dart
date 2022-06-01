@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_tag_editor/suggestions_box_controller.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
+import 'dart:developer' as developer;
 
 import './tag_editor_layout_delegate.dart';
 import './tag_layout.dart';
@@ -55,6 +57,7 @@ class TagEditor<T> extends StatefulWidget {
     this.suggestionsBoxRadius,
     this.iconSuggestionBox,
     this.searchAllSuggestions,
+    this.debounceDuration,
   }) : super(key: key);
 
   /// The number of tags currently shown.
@@ -126,6 +129,7 @@ class TagEditor<T> extends StatefulWidget {
   final Color? suggestionsBoxBackgroundColor;
   final double? suggestionsBoxRadius;
   final Widget? iconSuggestionBox;
+  final Duration? debounceDuration;
 
   @override
   TagsEditorState<T> createState() => TagsEditorState<T>();
@@ -149,6 +153,7 @@ class TagsEditorState<T> extends State<TagEditor<T>> {
   final _layerLink = LayerLink();
   List<T>? _suggestions;
   int _searchId = 0;
+  late Debouncer _deBouncer;
 
   RenderBox? get renderBox => context.findRenderObject() as RenderBox?;
 
@@ -156,13 +161,21 @@ class TagsEditorState<T> extends State<TagEditor<T>> {
   void initState() {
     super.initState();
     _textFieldController = (widget.controller ?? TextEditingController());
+    _deBouncer = Debouncer<String>(
+        widget.debounceDuration ?? const Duration(milliseconds: 300),
+        initialValue: '');
+
+    _deBouncer.values.listen((value) {
+      developer.log('TagsEditorState::initState():_deBouncer:listen: $value');
+      _onSearchChanged(value);
+    });
 
     _suggestionsBoxController = SuggestionsBoxController(context);
 
     _focusNode = (widget.focusNode ?? FocusNode())
       ..addListener(_onFocusChanged);
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       _createOverlayEntry();
     });
   }
@@ -268,7 +281,7 @@ class TagsEditorState<T> extends State<TagEditor<T>> {
   /// This function is still ugly, have to fix this later
   void _onTextFieldChange(String string) {
     if (string != _previousText) {
-      _onSearchChanged(string);
+      _deBouncer.value = string;
     }
 
     final previousText = _previousText;
@@ -326,7 +339,7 @@ class TagsEditorState<T> extends State<TagEditor<T>> {
 
   void _scrollToVisible() {
     Future.delayed(const Duration(milliseconds: 300), () {
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         final renderBox = context.findRenderObject() as RenderBox;
         await Scrollable.of(context)?.position.ensureVisible(renderBox);
       });
@@ -442,7 +455,7 @@ class TagsEditorState<T> extends State<TagEditor<T>> {
 
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification val) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           _suggestionsBoxController.overlayEntry?.markNeedsBuild();
         });
         return true;
