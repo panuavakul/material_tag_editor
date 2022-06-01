@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_tag_editor/suggestions_box_controller.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 import './tag_editor_layout_delegate.dart';
 import './tag_layout.dart';
@@ -214,20 +215,22 @@ class TagsEditorState<T> extends State<TagEditor<T>> {
                   color: widget.suggestionsBoxBackgroundColor ?? Colors.white,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxHeight: _suggestionBoxHeight),
-                    child: Container(
-                        decoration: BoxDecoration(
-                            color: widget.suggestionsBoxBackgroundColor ?? Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(widget.suggestionsBoxRadius ?? 0))),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.zero,
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            return _suggestions != null && _suggestions?.isNotEmpty == true
-                                ? widget.suggestionBuilder(context, this, _suggestions![index]!)
-                                : Container();
-                          },
-                        )
+                    child: PointerInterceptor(
+                      child: Container(
+                          decoration: BoxDecoration(
+                              color: widget.suggestionsBoxBackgroundColor ?? Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(widget.suggestionsBoxRadius ?? 0))),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              return _suggestions != null && _suggestions?.isNotEmpty == true
+                                  ? widget.suggestionBuilder(context, this, _suggestions![index]!)
+                                  : Container();
+                            },
+                          )
+                      ),
                     ),
                   ),
                 );
