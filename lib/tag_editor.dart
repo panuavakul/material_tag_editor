@@ -102,7 +102,7 @@ class TagEditor extends StatefulWidget {
   final Brightness? keyboardAppearance;
 
   @override
-  _TagsEditorState createState() => _TagsEditorState();
+  State<TagEditor> createState() => _TagsEditorState();
 }
 
 class _TagsEditorState extends State<TagEditor> {
@@ -142,7 +142,10 @@ class _TagsEditorState extends State<TagEditor> {
   /// This function is still ugly, have to fix this later
   void _onTextFieldChange(String string) {
     final previousText = _previousText;
-    _previousText = string;
+
+    setState(() {
+      _previousText = string;
+    });
 
     if (string.isEmpty || widget.delimiters.isEmpty) {
       return;
@@ -213,18 +216,39 @@ class _TagsEditorState extends State<TagEditor> {
     return _isFocused ? activeColor : _getDefaultIconColor(themeData);
   }
 
+  double _getTextWidth(String text, {TextStyle? textStyle}) {
+    final textSpan = TextSpan(
+      text: text,
+      style: textStyle, // Make optional to subtitle1
+    );
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    return textPainter.width;
+  }
+
   @override
   Widget build(BuildContext context) {
     final decoration = widget.hasAddButton
         ? widget.inputDecoration.copyWith(
             suffixIcon: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {
-              _onTagChanged(_textFieldController.text);
-            },
-            child: const Icon(Icons.add),
-          ))
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                _onTagChanged(_textFieldController.text);
+              },
+              child: const Icon(Icons.add),
+            ),
+          )
         : widget.inputDecoration;
+
+    //* TextField use subtitle1 for default style
+    final defaultTextFieldTextStyle = Theme.of(context).textTheme.subtitle1;
+    final textStyle = widget.textStyle?.fontSize == null
+        ? widget.textStyle
+            ?.copyWith(fontSize: defaultTextFieldTextStyle?.fontSize)
+        : widget.textStyle?.copyWith();
 
     final tagEditorArea = Container(
       child: TagLayout(
@@ -232,6 +256,7 @@ class _TagsEditorState extends State<TagEditor> {
           length: widget.length,
           minTextFieldWidth: widget.minTextFieldWidth,
           spacing: widget.tagSpacing,
+          textWidth: _getTextWidth(_previousText, textStyle: textStyle),
         ),
         children: List<Widget>.generate(
               widget.length,
@@ -244,7 +269,7 @@ class _TagsEditorState extends State<TagEditor> {
               LayoutId(
                 id: TagEditorLayoutDelegate.textFieldId,
                 child: TextField(
-                  style: widget.textStyle,
+                  style: textStyle,
                   focusNode: _focusNode,
                   enabled: widget.enabled,
                   controller: _textFieldController,
