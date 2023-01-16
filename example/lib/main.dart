@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: _textEditingController,
                 focusNode: _focusNode,
                 delimiters: [',', ' '],
-                hasAddButton: true,
+                hasAddButton: false,
                 resetTextOnSubmitted: true,
                 // This is set to grey just to illustrate the `textStyle` prop
                 textStyle: const TextStyle(color: Colors.grey),
