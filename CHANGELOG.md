@@ -1,3 +1,10 @@
+## [0.2.0-dev.1] - 2023/01/16.
+
+Feature
+
+- Go to new line when TextField's text overflow
+  - [PR](https://github.com/panuavakul/material_tag_editor/pull/45)
+
 ## [0.1.2] - 2022/02/02.
 
 Feature

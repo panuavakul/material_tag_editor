@@ -24,11 +24,11 @@ class MyHomePage extends StatefulWidget {
   final String? title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> _values = [];
+  final List<String> _values = <String>[];
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _textEditingController = TextEditingController();
 
@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: _textEditingController,
                 focusNode: _focusNode,
                 delimiters: [',', ' '],
-                hasAddButton: true,
+                hasAddButton: false,
                 resetTextOnSubmitted: true,
                 // This is set to grey just to illustrate the `textStyle` prop
                 textStyle: const TextStyle(color: Colors.grey),

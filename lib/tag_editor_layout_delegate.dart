@@ -7,6 +7,7 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
     required this.length,
     required this.minTextFieldWidth,
     required this.spacing,
+    this.textWidth,
   });
 
   static const tagId = 'tag_';
@@ -15,6 +16,7 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
   final int length;
   final double minTextFieldWidth;
   final double spacing;
+  final double? textWidth;
 
   /// This is used for
   Size parentSize = Size.zero;
@@ -90,15 +92,17 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
       });
       final spacingWidth = spacing * max(tagSizes.length - 1, 0);
       final leftOverWidth = size.width - currentRowWidth - spacingWidth;
-      final textWidth = max(leftOverWidth, minTextFieldWidth);
+      final textFieldWidth = max(leftOverWidth, minTextFieldWidth);
       //* Check if Textbox is overflowing
       //* Check if overflowing
       if (_isOverflow(
-        childWidth: textWidth,
-        parentWidth: size.width,
-        tagSizes: tagSizes,
-        spacing: spacing,
-      )) {
+            childWidth: textFieldWidth,
+            parentWidth: size.width,
+            tagSizes: tagSizes,
+            spacing: spacing,
+          ) ||
+          // * is the Text in TextField overflowing
+          ((textWidth ?? 0) > leftOverWidth) && tagSizes.isNotEmpty) {
         textFieldSize = layoutChild(
           textFieldId,
           BoxConstraints.loose(Size.fromWidth(size.width)),
@@ -111,7 +115,7 @@ class TagEditorLayoutDelegate extends MultiChildLayoutDelegate {
       } else {
         textFieldSize = layoutChild(
           textFieldId,
-          BoxConstraints.loose(Size.fromWidth(textWidth)),
+          BoxConstraints.loose(Size.fromWidth(textFieldWidth)),
         );
       }
       positionChild(textFieldId, cursor);
