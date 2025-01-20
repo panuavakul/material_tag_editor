@@ -44,6 +44,7 @@ class TagEditor extends StatefulWidget {
   final int length;
 
   /// The minimum width that the `TextField` should take
+  /// If this is set too low, [inputDecoration] prefix and suffix might not show properly.
   final double minTextFieldWidth;
 
   /// The spacing between each tag
