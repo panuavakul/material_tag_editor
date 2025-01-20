@@ -244,7 +244,7 @@ class _TagsEditorState extends State<TagEditor> {
         : widget.inputDecoration;
 
     //* TextField use subtitle1 for default style
-    final defaultTextFieldTextStyle = Theme.of(context).textTheme.subtitle1;
+    final defaultTextFieldTextStyle = Theme.of(context).textTheme.titleMedium;
     final textStyle = widget.textStyle?.fontSize == null
         ? widget.textStyle
             ?.copyWith(fontSize: defaultTextFieldTextStyle?.fontSize)
